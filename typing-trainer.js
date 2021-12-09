@@ -30,4 +30,9 @@ Slouches towards Bethlehem to be born?`;
 
   // generate initial content
   $("#mount").html(`<h1>${title}</h1><h2>${author}</h2><p>${cont}</p>`);
+
+  // listen for keydowns
+  $(document).on("keydown", (e) => {
+    console.log(e.key);
+  });
 });
