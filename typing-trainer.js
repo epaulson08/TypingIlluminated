@@ -1,7 +1,8 @@
-let title = "The Second Coming"
-let author = "William Butler Yeats"
-let cont = 
-`Turning and turning in the widening gyre
+$(document).ready(() => {
+
+  const title = "The Second Coming";
+  const author = "William Butler Yeats";
+  const cont = `Turning and turning in the widening gyre
 The falcon cannot hear the falconer;
 Things fall apart; the centre cannot hold;
 Mere anarchy is loosed upon the world,
@@ -24,45 +25,33 @@ That twenty centuries of stony sleep
 Were vexed to nightmare by a rocking cradle,
 And what rough beast, its hour come round at last,   
 Slouches towards Bethlehem to be born?`;
-function txtToHtml(txtString) {
-    let output = document.createElement('div');
-    output.id = 'poem';
-    
+
+  function txtToHtml(txtString) {
+    let output = document.createElement("div");
+    output.id = "poem";
+
     let formatted = txtString.split(/\n/);
-    let brSpan = document.createElement('span');
-    
-    
-    formatted.forEach(line => {
-        let lineElem = document.createElement('span');
-        let br = document.createElement('br');
-        lineElem.append(line);
-   
-        output.appendChild(lineElem);
-        output.appendChild(br);
+
+    formatted.forEach((line) => {
+      let lineElem = document.createElement("span");
+      let br = document.createElement("br");
+      lineElem.append(line);
+
+      output.appendChild(lineElem);
+      output.appendChild(br);
     });
-    
-    console.log(output);
+
     return output;
-}
+  }
 
-function logKey(e) {
-    console.log(e.code);
-    if (e.code === 'KeyA') console.log("That matches 'A'");
-    tester.id = 'typedThis';
-}
+  // generate initial content
+  const $mount = $('#mount');
 
-document.addEventListener('keydown', logKey);
+  const titleElem = `<h1>${title}</h1>`;
+  const authorElem = `<h2>${author}</h2>`;
+  const contElem = txtToHtml(cont);
 
-let mount = document.getElementById('mount');
-let tester = document.getElementById('changeMe');
+  $mount.html(titleElem).append(authorElem).append(contElem);
 
-let titleElem = document.createElement('h1');
-titleElem.append(title);
-let authorElem = document.createElement('h2');
-authorElem.append(author);
-let contElem = document.createElement('p');
-contElem.appendChild(txtToHtml(cont));
-
-mount.appendChild(titleElem);
-mount.appendChild(authorElem);
-mount.appendChild(contElem);
+  
+});
