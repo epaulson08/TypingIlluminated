@@ -1,0 +1,12 @@
+#highlighter {
+  background-color: yellow;
+  position: absolute;
+  font-family: monospace;
+  border: 1px solid black;
+}
+
+#cont {
+  font-family: monospace;
+  position: relative;
+  display: inline;
+}

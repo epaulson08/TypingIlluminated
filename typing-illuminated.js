@@ -30,9 +30,9 @@ $(document).ready(() => {
   cont = cont.replace(/\n/g, "<br />");
 
   // generate initial content
-  $("#mount").html(
-    `<h1>${title}</h1><h2>${author}</h2><p id="cont">${cont}</p>`
-  );
+  $("h1.title").text(title);
+  $("h2.author").text(author);
+  $("p#cont").text(cont);
 
   // echo keydowns to console
   var offset = 0;
