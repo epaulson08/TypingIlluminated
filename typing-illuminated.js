@@ -41,6 +41,7 @@ $(document).ready(() => {
     if (e.key === cont[offset]) {
       $("#cont").text((index, text) => text.replace(text[offset], "X"));
       offset++;
+      $("#highlighter").css("margin-left", "+=8");
     }
   });
 });
