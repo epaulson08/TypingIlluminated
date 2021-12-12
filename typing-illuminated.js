@@ -32,22 +32,36 @@ $(document).ready(() => {
 
   function spanify(str) {
     let toReturn = [...str];
-    for(let i=0; i < toReturn.length; i++) {
+    for (let i = 0; i < toReturn.length; i++) {
       toReturn.splice(i, 1, `<span>${toReturn[i]}</span>`);
-    };
+    }
     return toReturn;
   }
 
   // generate initial content
   $("h1.title").text(title);
   $("h2.author").text(author);
+  // add span wrapper to every character of `cont`
   $("#cont").html(spanify(cont));
+  // create highlighter and initialize to first character
+  let $current = $("#cont > span:first-child");
+  $current.css("background-color", "yellow");
 
-  // echo keydowns to console
-  var offset = 0;
+  // listen for keydowns
+  let offset = 0;
   $(document).on("keydown", (e) => {
     console.log(e.key);
+    // user typed correct key
     if (e.key === cont[offset]) {
+      offset++;
+      $current.css("background-color", "white");
+      $current = $current.next("span");
+      $current.css("background-color", "yellow");
+    }
+
+    // user typed incorrect key
+    else {
+      console.log("wrong");
     }
   });
 });
