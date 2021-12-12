@@ -1,13 +1,3 @@
-#highlighter {
-  background-color: yellow;
-  position: absolute;
-  font-family: monospace;
-  border: 1px solid black;
-  margin-left: 0;
-}
-
 #cont {
   font-family: monospace;
-  position: relative;
-  display: inline;
 }

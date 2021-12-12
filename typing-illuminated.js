@@ -25,23 +25,29 @@ $(document).ready(() => {
   // And what rough beast, its hour come round at last,
   // Slouches towards Bethlehem to be born?`;
 
+  // // add <br />'s to poem
+  // cont = cont.replace(/\n/g, "<br />");
+
   let cont = "can i make it work with a single line?";
-  // add <br />'s to poem
-  cont = cont.replace(/\n/g, "<br />");
+
+  function spanify(str) {
+    let toReturn = [...str];
+    for(let i=0; i < toReturn.length; i++) {
+      toReturn.splice(i, 1, `<span>${toReturn[i]}</span>`);
+    };
+    return toReturn;
+  }
 
   // generate initial content
   $("h1.title").text(title);
   $("h2.author").text(author);
-  $("p#cont").text(cont);
+  $("#cont").html(spanify(cont));
 
   // echo keydowns to console
   var offset = 0;
   $(document).on("keydown", (e) => {
     console.log(e.key);
     if (e.key === cont[offset]) {
-      $("#cont").text((index, text) => text.replace(text[offset], "X"));
-      offset++;
-      $("#highlighter").css("margin-left", "+=8");
     }
   });
 });
