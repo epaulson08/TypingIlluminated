@@ -25,31 +25,36 @@ $(document).ready(() => {
   // back from array to string
   toPresent = toPresent.join("");
 
-  // add <br />'s for newlines;
-  // 23CE is return character to cue user
-  toPresent = toPresent.replace(/\n/g, "&#x23CE;<br />");
+  // add <br />'s for newlines
+  toPresent = toPresent.replace(/\n/g, "<br />");
   $("#cont").html(toPresent);
 
   // create highlighter and initialize to first character
   let $current = $("#cont > span:first-child");
-  // $current.css("background-color", "yellow");
   $current.addClass("highlighted");
 
   // listen for keydowns
   let offset = 0;
+  let showingReturn = false;
+
   $(document).on("keydown", (e) => {
-    console.log("typed: " + e.key);
-    console.log("expected: " + cont[offset]);
-    // user typed correct key
-    if (
-      e.key === cont[offset] ||
-      (cont[offset] === "\n" && e.key === "Enter")
-    ) {
+    let typedCorrect =
+      e.key === cont[offset] || (cont[offset] === "\n" && e.key === "Enter");
+    if (typedCorrect) {
+      if (showingReturn) {
+        $current.html("<span><br /></span>");
+        showingReturn = false;
+      }
+      // check for upcoming newline
+      if (!showingReturn && cont[offset + 1] === "\n") {
+        // add return character to cue user to hit enter
+        $current.next().html("<span>&#x23CE;<br /></span>");
+        showingReturn = true;
+      }
       offset++;
       $current.removeClass("highlighted");
       $current = $current.next("span");
       $current.addClass("highlighted");
-      // $current.css("background-color", "yellow");
     }
 
     // user typed incorrect key
