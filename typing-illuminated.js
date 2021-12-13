@@ -36,18 +36,20 @@ $(document).ready(() => {
   // listen for keydowns
   let offset = 0;
   let showingReturn = false;
-
+  
   $(document).on("keydown", (e) => {
+    console.log(e.key);
     let typedCorrect =
-      e.key === cont[offset] || (cont[offset] === "\n" && e.key === "Enter");
+    e.key === cont[offset] || (cont[offset] === "\n" && e.key === "Enter");
     if (typedCorrect) {
+      // for newlines, add return character to cue user to hit enter;
+      // remove the symbol when they type the next character
       if (showingReturn) {
         $current.html("<span><br /></span>");
         showingReturn = false;
       }
       // check for upcoming newline
       if (!showingReturn && cont[offset + 1] === "\n") {
-        // add return character to cue user to hit enter
         $current.next().html("<span>&#x23CE;<br /></span>");
         showingReturn = true;
       }
@@ -59,7 +61,11 @@ $(document).ready(() => {
 
     // user typed incorrect key
     else {
+      // ignore meta-characters
+      const metas = ["Meta", "Shift", "Tab"];
+      if (!metas.includes(e.key)) {
       console.log("wrong");
+      }
     }
   });
 });
