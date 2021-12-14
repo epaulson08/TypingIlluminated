@@ -56,6 +56,12 @@ $(document).ready(() => {
   let wrongChar = -1;
 
   $(document).on("keydown", (e) => {
+    // prevent browser default of Space causing down-scroll,
+    // but do not lock up other metacharacters
+    if (e.code === "Space") {
+      e.preventDefault();
+    }
+    
     let typedCorrect =
       e.key === cont[offset] || (cont[offset] === "\n" && e.key === "Enter");
 
@@ -69,7 +75,7 @@ $(document).ready(() => {
         $current = $current.prev("span");
         if (wrongChar === offset) {
           afterWrong = false;
-        } 
+        }
       } else {
         offset++;
         $current = $current.next("span");

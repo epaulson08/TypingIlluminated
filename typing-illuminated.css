@@ -6,6 +6,30 @@
   font-size: 20px;
 }
 
+body {
+  background-color: gray;
+  margin: 0;
+}
+
+.container {
+  background-color: white;;
+  width: 70vw;
+  margin: 0 auto;
+}
+
+.container-content {
+  padding: 0 30px;
+}
+
+h1 {
+  margin-top: 0;
+  padding-top: 20px;
+}
+
+p {
+  line-height: 1.5;
+}
+
 #cont {
   font-family: "Ubuntu Mono";
 }
