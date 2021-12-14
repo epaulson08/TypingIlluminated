@@ -13,5 +13,14 @@
 .highlighted {
   background-color: darkblue;
   color: white;
-  border: 1px solid darkblue;
+}
+
+.wrong {
+  background-color: darkred;
+  color: white;
+}
+
+.after-wrong {
+  background-color: darkgray;
+  color: white;
 }

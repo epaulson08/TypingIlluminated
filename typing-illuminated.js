@@ -33,15 +33,50 @@ $(document).ready(() => {
   let $current = $("#cont > span:first-child");
   $current.addClass("highlighted");
 
-  // listen for keydowns
+  /* business logic and keydown listener */
+
+  // offset from start of `cont`. will increment when
+  // user types a correct key
   let offset = 0;
+
+  // will show a return symbol once the user types
+  // to the end of a line, then hide it again when they
+  // hit enter
   let showingReturn = false;
-  
+
+  // meta-characters to ignore when determining if
+  // a correct key was pressed
+  const metas = ["Meta", "Shift", "Tab"];
+
+  // flag to track if user has not yet corrected
+  // an incorrectly typed key
+  let afterWrong = false;
+
+  // store the offset of the incorrectly typed key
+  let wrongChar = -1;
+
   $(document).on("keydown", (e) => {
-    console.log(e.key);
     let typedCorrect =
-    e.key === cont[offset] || (cont[offset] === "\n" && e.key === "Enter");
-    if (typedCorrect) {
+      e.key === cont[offset] || (cont[offset] === "\n" && e.key === "Enter");
+
+    if (metas.includes(e.key)) {
+      // ignore meta-characters
+      return;
+    } else if (afterWrong) {
+      if (e.key === "Backspace") {
+        offset--;
+        $current.removeClass("after-wrong");
+        $current = $current.prev("span");
+        if (wrongChar === offset) {
+          afterWrong = false;
+        } 
+      } else {
+        offset++;
+        $current = $current.next("span");
+        $current.addClass("after-wrong");
+      }
+    } else if (typedCorrect) {
+      console.log("there");
       // for newlines, add return character to cue user to hit enter;
       // remove the symbol when they type the next character
       if (showingReturn) {
@@ -53,19 +88,19 @@ $(document).ready(() => {
         $current.next().html("<span>&#x23CE;<br /></span>");
         showingReturn = true;
       }
+      // user typed correct character
       offset++;
       $current.removeClass("highlighted");
       $current = $current.next("span");
       $current.addClass("highlighted");
-    }
-
-    // user typed incorrect key
-    else {
-      // ignore meta-characters
-      const metas = ["Meta", "Shift", "Tab"];
-      if (!metas.includes(e.key)) {
-      console.log("wrong");
-      }
+    } else {
+      // user typed incorrect character
+      wrongChar = offset;
+      $current.addClass("wrong");
+      afterWrong = true;
+      $current = $current.next("span");
+      $current.addClass("after-wrong");
+      offset++;
     }
   });
 });
