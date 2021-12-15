@@ -53,7 +53,7 @@ $(document).ready(() => {
   let afterWrong = false;
 
   // store the offset of the incorrectly typed key
-  let wrongChar = -1;
+  let mistakeOffset = -1;
 
   $(document).on("keydown", (e) => {
     // prevent browser default of Space causing down-scroll,
@@ -73,8 +73,12 @@ $(document).ready(() => {
         offset--;
         $current.removeClass("after-wrong");
         $current = $current.prev("span");
-        if (wrongChar === offset) {
+        if (mistakeOffset === offset) {
           afterWrong = false;
+          $current.removeClass("wrong");
+          $current.addClass("highlighted");
+        } else {
+
         }
       } else {
         offset++;
@@ -97,11 +101,12 @@ $(document).ready(() => {
       // user typed correct character
       offset++;
       $current.removeClass("highlighted");
+      $current.addClass("right");
       $current = $current.next("span");
       $current.addClass("highlighted");
     } else {
       // user typed incorrect character
-      wrongChar = offset;
+      mistakeOffset = offset;
       $current.addClass("wrong");
       afterWrong = true;
       $current = $current.next("span");

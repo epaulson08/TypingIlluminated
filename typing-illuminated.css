@@ -7,7 +7,7 @@
 }
 
 body {
-  background-color: gray;
+  background-color: lightblue;
   margin: 0;
 }
 
@@ -32,6 +32,11 @@ p {
 
 #cont {
   font-family: "Ubuntu Mono";
+  color: slategray;
+}
+
+.right {
+  color: black !important;
 }
 
 .highlighted {
