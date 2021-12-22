@@ -1,39 +1,13 @@
 $(document).ready(() => {
-  const title = "The Second Coming";
-  const author = "William Butler Yeats";
+  init();
+
+  /* business logic and keydown listener */
+
   // var cont is defined in separate script
-
-  function spanify(str) {
-    let toReturn = [...str];
-    for (let i = 0; i < toReturn.length; i++) {
-      toReturn.splice(i, 1, `<span>${toReturn[i]}</span>`);
-    }
-    return toReturn;
-  }
-
-  // generate initial content
-  $("h1.title").text(title);
-  $("h2.author").text(author);
-
-  // `cont` will remain the original string
-  // `toPresent` will be a copy that is changed to
-  // html
-  let toPresent = cont;
-
-  // add span wrapper to every character
-  toPresent = spanify(toPresent);
-  // back from array to string
-  toPresent = toPresent.join("");
-
-  // add <br />'s for newlines
-  toPresent = toPresent.replace(/\n/g, "<br />");
-  $("#cont").html(toPresent);
 
   // create highlighter and initialize to first character
   let $current = $("#cont > span:first-child");
   $current.addClass("highlighted");
-
-  /* business logic and keydown listener */
 
   // offset from start of `cont`. will increment when
   // user types a correct key
@@ -61,7 +35,7 @@ $(document).ready(() => {
     if (e.code === "Space") {
       e.preventDefault();
     }
-    
+
     let typedCorrect =
       e.key === cont[offset] || (cont[offset] === "\n" && e.key === "Enter");
 
@@ -78,7 +52,6 @@ $(document).ready(() => {
           $current.removeClass("wrong");
           $current.addClass("highlighted");
         } else {
-
         }
       } else {
         offset++;
@@ -114,4 +87,35 @@ $(document).ready(() => {
       offset++;
     }
   });
+
+  function init() {
+    const title = "The Second Coming";
+    const author = "William Butler Yeats";
+
+    function spanify(str) {
+      let toReturn = [...str];
+      for (let i = 0; i < toReturn.length; i++) {
+        toReturn.splice(i, 1, `<span>${toReturn[i]}</span>`);
+      }
+      return toReturn;
+    }
+
+    // generate initial content
+    $("h1.title").text(title);
+    $("h2.author").text(author);
+
+    // `cont` will remain the original string
+    // `toPresent` will be a copy that is changed to
+    // html
+    let toPresent = cont;
+
+    // add span wrapper to every character
+    toPresent = spanify(toPresent);
+    // back from array to string
+    toPresent = toPresent.join("");
+
+    // add <br />'s for newlines
+    toPresent = toPresent.replace(/\n/g, "<br />");
+    $("#cont").html(toPresent);
+  }
 });
