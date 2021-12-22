@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono');
 @import url('https://fonts.googleapis.com/css?family=Ubuntu');
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans');
 
 :root {
-  font-family: "Ubuntu";
+  /* font-family: "Ubuntu"; */
+  font-family: "Noto Sans";
   font-size: 20px;
 }
 
@@ -13,8 +15,9 @@ body {
 
 .container {
   background-color: white;;
-  width: 70vw;
+  max-width: 600px;
   margin: 0 auto;
+  box-shadow: rgba(149, 157, 165, 0.4) 0px 8px 24px;
 }
 
 .container-content {

@@ -1,13 +1,10 @@
 $(document).ready(() => {
-  init();
+  /* Declarations */
 
-  /* business logic and keydown listener */
+  // character highlighter
+  let $current;
 
-  // var cont is defined in separate script
-
-  // create highlighter and initialize to first character
-  let $current = $("#cont > span:first-child");
-  $current.addClass("highlighted");
+  // var `cont` is defined in a separate script
 
   // offset from start of `cont`. will increment when
   // user types a correct key
@@ -29,6 +26,11 @@ $(document).ready(() => {
   // store the offset of the incorrectly typed key
   let mistakeOffset = -1;
 
+  /* Set up page */
+
+  init();
+
+  /* Business Logic */
   $(document).on("keydown", (e) => {
     // prevent browser default of Space causing down-scroll,
     // but do not lock up other metacharacters
@@ -36,30 +38,36 @@ $(document).ready(() => {
       e.preventDefault();
     }
 
-    let typedCorrect =
+    const typedCorrect =
       e.key === cont[offset] || (cont[offset] === "\n" && e.key === "Enter");
+
+    const backspace = e.key === "Backspace";
 
     if (metas.includes(e.key)) {
       // ignore meta-characters
       return;
-    } else if (afterWrong) {
-      if (e.key === "Backspace") {
-        offset--;
+    } else if (backspace) {
+      offset--;
+      if (afterWrong) {
         $current.removeClass("after-wrong");
         $current = $current.prev("span");
         if (mistakeOffset === offset) {
           afterWrong = false;
           $current.removeClass("wrong");
           $current.addClass("highlighted");
-        } else {
         }
       } else {
-        offset++;
-        $current = $current.next("span");
-        $current.addClass("after-wrong");
+        $current.removeClass("highlighted");
+        $current.removeClass("right")
+        $current = $current.prev("span");
+        $current.removeClass("right");
+        $current.addClass("highlighted");
       }
+    } else if (afterWrong) {
+      offset++;
+      $current = $current.next("span");
+      $current.addClass("after-wrong");
     } else if (typedCorrect) {
-      console.log("there");
       // for newlines, add return character to cue user to hit enter;
       // remove the symbol when they type the next character
       if (showingReturn) {
@@ -117,5 +125,9 @@ $(document).ready(() => {
     // add <br />'s for newlines
     toPresent = toPresent.replace(/\n/g, "<br />");
     $("#cont").html(toPresent);
+
+    // initialize highlighter
+    $current = $("#cont > span:first-child");
+    $current.addClass("highlighted");
   }
 });
