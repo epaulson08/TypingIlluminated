@@ -4,7 +4,9 @@ $(document).ready(() => {
   // character highlighter
   let $current;
 
-  // var `cont` is defined in a separate script
+  // initialize content text
+  const content = secondComing;
+  const cont = content.text;
 
   // offset from start of `cont`. will increment when
   // user types a correct key
@@ -17,20 +19,22 @@ $(document).ready(() => {
 
   // meta-characters to ignore when determining if
   // a correct key was pressed
-  const metas = ["Meta", "Shift", "Tab"];
+  const metas = ["Meta", "Shift", "Tab", "Alt", "CapsLock", "ArrowUp", "ArrowRight", "ArrowLeft", "ArrowDown", "Insert", "PageUp", "PageDown", "Home", "End", "Insert", "NumLock", "Escape"];
 
   // flag to track if user has not yet corrected
   // an incorrectly typed key
   let afterWrong = false;
 
   // store the offset of the incorrectly typed key
-  let mistakeOffset = -1;
+  let mistakeOffset = 0;
 
-  /* Set up page */
-
-  init();
+  // make HTML from content
+  setUpPage(content);
 
   /* Business Logic */
+  // TODO: handle "Delete" key
+  // Handle backspace from first character (highlighter disappears)
+
   $(document).on("keydown", (e) => {
     // prevent browser default of Space causing down-scroll,
     // but do not lock up other metacharacters
@@ -96,9 +100,7 @@ $(document).ready(() => {
     }
   });
 
-  function init() {
-    const title = "The Second Coming";
-    const author = "William Butler Yeats";
+  function setUpPage(content) {
 
     function spanify(str) {
       let toReturn = [...str];
@@ -109,17 +111,18 @@ $(document).ready(() => {
     }
 
     // generate initial content
-    $("h1.title").text(title);
-    $("h2.author").text(author);
+    $("h1.title").text(content.title);
+    $("h2.author").text(content.author);
 
-    // `cont` will remain the original string
+    // `content.text` will remain the original string
     // `toPresent` will be a copy that is changed to
     // html
-    let toPresent = cont;
+    let toPresent = content.text;
 
     // add span wrapper to every character
     toPresent = spanify(toPresent);
-    // back from array to string
+
+    // change back from array to string
     toPresent = toPresent.join("");
 
     // add <br />'s for newlines
