@@ -30,7 +30,7 @@ $(document).ready(() => {
     }
 
     /* Core Business Logic */
-    state = update(e.key, state);
+    state = update(state, e.key);
   });
 });
 
@@ -40,18 +40,21 @@ $(document).ready(() => {
 // Handle behavior on last character (e.g. when typed incorrectly)
 // Fix backspace after return character behavior
 
-function update(key, state) {
+function update(state, key) {
+  // ignore meta-characters
+  if (_isMetaCharacter(key)) {
+    return state;
+  }
+
   // unpack `state` for readability
   let cont = state.cont;
   let offset = state.offset;
+  let mistakeOffset = state.mistakeOffset;
   let isAfterMistake = state.isAfterMistake;
   let isShowingReturn = state.isShowingReturn;
   let $current = state.$current;
 
-  if (_isMetaCharacter(key)) {
-    // ignore meta-characters
-    return state;
-  } else if (_isLastCharacter(cont, offset)) {
+  if (_isLastCharacter(cont, offset)) {
     // last character of text plus empty buffer characters
     // (TODO)
   } else if (_isBackspace(key)) {
@@ -93,7 +96,7 @@ function update(key, state) {
     offset++;
     _markCorrect($current);
     $current = $current.next("span");
-    $current.addClass("highlighted");
+    _markHighlighted($current);
   } else {
     // user typed incorrect character
     mistakeOffset = offset;
@@ -107,6 +110,7 @@ function update(key, state) {
   // repack `state` and return
   state.cont = cont;
   state.offset = offset;
+  state.mistakeOffset = mistakeOffset;
   state.isAfterMistake = isAfterMistake;
   state.isShowingReturn = isShowingReturn;
   state.$current = $current;
