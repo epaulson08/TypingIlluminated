@@ -25,7 +25,7 @@ $(document).ready(() => {
   $(document).on("keydown", (e) => {
     // prevent browser default of Space causing down-scroll,
     // but do not lock up other metacharacters
-    if (e.key === " ") {
+    if (e.code === "Space") {
       e.preventDefault();
     }
 
@@ -53,28 +53,25 @@ function update(key, state) {
     return state;
   } else if (_isLastCharacter(cont, offset)) {
     // last character of text plus empty buffer characters
-    // TODO
+    // (TODO)
   } else if (_isBackspace(key)) {
     offset--;
     if (isAfterMistake) {
-      $current.removeClass("after-wrong");
+      _markPristine($current);
       $current = $current.prev("span");
       if (mistakeOffset === offset) {
         isAfterMistake = false;
-        $current.removeClass("wrong");
-        $current.addClass("highlighted");
+        _markHighlighted($current);
       }
     } else {
-      $current.removeClass("highlighted");
-      $current.removeClass("right");
-      $current = state.$current.prev("span");
-      $current.removeClass("right");
-      $current.addClass("highlighted");
+      _markPristine($current);
+      $current = $current.prev("span");
+      _markHighlighted($current);
     }
-  } else if (state.isAfterMistake) {
+  } else if (isAfterMistake) {
     offset++;
     $current = $current.next("span");
-    $current.addClass("after-wrong");
+    _markAfterMistake($current);
   } else if (_typedCorrect(key, cont, offset)) {
     // for newlines, add return character to cue user to hit enter;
     // remove the symbol when they type the next character
@@ -87,25 +84,23 @@ function update(key, state) {
       $current.next().html("<span>&#x23CE;<br /></span>");
       isShowingReturn = true;
     }
-    if (offset === cont.length - 1) {
+    if (_isLastCharacter(cont, offset)) {
       $("#complete").text("Finished!");
-      $current.removeClass("highlighted");
-      $current.addClass("right");
-      _animate();
+      _markCorrect($current);
+      _animateVictory();
       return;
     }
     offset++;
-    $current.removeClass("highlighted");
-    $current.addClass("right");
+    _markCorrect($current);
     $current = $current.next("span");
     $current.addClass("highlighted");
   } else {
     // user typed incorrect character
     mistakeOffset = offset;
-    $current.addClass("wrong");
+    _markIncorrect($current);
     isAfterMistake = true;
     $current = $current.next("span");
-    $current.addClass("after-wrong");
+    _markAfterMistake($current);
     offset++;
   }
 
@@ -145,13 +140,40 @@ function setUpPage(content) {
 
 /* Helper Methods */
 
-function _markCorrect($element) {}
+function _markCorrect($element) {
+  $element.addClass("right");
+  $element.removeClass("highlighted");
+  $element.removeClass("wrong");
+  $element.removeClass("after-wrong");
+}
 
-function _markIncorrect($element) {}
+function _markIncorrect($element) {
+  $element.removeClass("right");
+  $element.removeClass("highlighted");
+  $element.addClass("wrong");
+  $element.removeClass("after-wrong");
+}
 
-function _markHighlighted($element) {}
+function _markHighlighted($element) {
+  $element.removeClass("right");
+  $element.addClass("highlighted");
+  $element.removeClass("wrong");
+  $element.removeClass("after-wrong");
+}
 
-function _markAfterIncorrect($element) {}
+function _markAfterMistake($element) {
+  $element.removeClass("right");
+  $element.removeClass("highlighted");
+  $element.removeClass("wrong");
+  $element.addClass("after-wrong");
+}
+
+function _markPristine($element) {
+  $element.removeClass("right");
+  $element.removeClass("highlighted");
+  $element.removeClass("wrong");
+  $element.removeClass("after-wrong");
+}
 
 function _spanify(str) {
   let toReturn = [...str];
@@ -162,7 +184,7 @@ function _spanify(str) {
   return toReturn.join("");
 }
 
-function _animate() {
+function _animateVictory() {
   console.log("This will do something soon");
 }
 
