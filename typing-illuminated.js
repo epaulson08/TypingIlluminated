@@ -1,106 +1,123 @@
 $(document).ready(() => {
   /* Declarations */
-  let state = {};
+  var state = {};
 
   // offset from start of `cont`
-  // state.offset = 0;
-  let offset = 0;
+  state.offset = 0;
 
   // will show a return symbol once the user types
   // to the end of a line, then hide it again when they
   // hit enter
-  let showingReturn = false;
+  state.isShowingReturn = false;
 
   // flag to track if user has not yet corrected
   // an incorrectly typed key
-  let afterWrong = false;
+  state.isAfterMistake = false;
 
   // store the offset of the incorrectly typed key
-  let mistakeOffset = 0;
+  state.mistakeOffset = 0;
 
   // make HTML from content; $current is a span
   // element wrapping the first typeable character
-  let $current = setUpPage(secondComing);
-  const cont = secondComing.text;
-
-  /* Business Logic */
-  // TODOs: 
-  // Handle "Delete" key
-  // Handle backspace from first character (highlighter disappears)
-  // Handle behavior on last character (e.g. when typed incorrectly)
-  // Fix backspace after return character behavior
+  state.$current = setUpPage(secondComing);
+  state.cont = secondComing.text;
 
   $(document).on("keydown", (e) => {
-    let key = e.key;
-
     // prevent browser default of Space causing down-scroll,
     // but do not lock up other metacharacters
-    if (key === " ") {
+    if (e.key === " ") {
       e.preventDefault();
     }
 
-    if (_isMetaCharacter(key)) {
-      // ignore meta-characters
-      return;
-    } else if (_isLastCharacter(cont, offset)) {
-      // last character of text plus empty buffer characters
-      // TODO
-    } else if (_isBackspace(key)) {
-      offset--;
-      if (afterWrong) {
-        $current.removeClass("after-wrong");
-        $current = $current.prev("span");
-        if (mistakeOffset === offset) {
-          afterWrong = false;
-          $current.removeClass("wrong");
-          $current.addClass("highlighted");
-        }
-      } else {
-        $current.removeClass("highlighted");
-        $current.removeClass("right");
-        $current = $current.prev("span");
-        $current.removeClass("right");
-        $current.addClass("highlighted");
-      }
-    } else if (afterWrong) {
-      offset++;
-      $current = $current.next("span");
-      $current.addClass("after-wrong");
-    } else if (_typedCorrect(key, cont, offset)) {
-      // for newlines, add return character to cue user to hit enter;
-      // remove the symbol when they type the next character
-      if (showingReturn) {
-        $current.html("<span><br /></span>");
-        showingReturn = false;
-      }
-      // check for upcoming newline
-      if (!showingReturn && cont[offset + 1] === "\n") {
-        $current.next().html("<span>&#x23CE;<br /></span>");
-        showingReturn = true;
-      }
-      if (offset === cont.length - 1) {
-        $("#complete").text("Finished!");
-        $current.removeClass("highlighted");
-        $current.addClass("right");
-        _animate();
-        return;
-      }
-      offset++;
-      $current.removeClass("highlighted");
-      $current.addClass("right");
-      $current = $current.next("span");
-      $current.addClass("highlighted");
-    } else {
-      // user typed incorrect character
-      mistakeOffset = offset;
-      $current.addClass("wrong");
-      afterWrong = true;
-      $current = $current.next("span");
-      $current.addClass("after-wrong");
-      offset++;
-    }
+    /* Core Business Logic */
+    state = update(e.key, state);
   });
 });
+
+// TODOs:
+// Handle "Delete" key
+// Handle backspace from first character (highlighter disappears)
+// Handle behavior on last character (e.g. when typed incorrectly)
+// Fix backspace after return character behavior
+
+function update(key, state) {
+  // unpack `state` for readability
+  let cont = state.cont;
+  let offset = state.offset;
+  let isAfterMistake = state.isAfterMistake;
+  let isShowingReturn = state.isShowingReturn;
+  let $current = state.$current;
+
+  if (_isMetaCharacter(key)) {
+    // ignore meta-characters
+    return state;
+  } else if (_isLastCharacter(cont, offset)) {
+    // last character of text plus empty buffer characters
+    // TODO
+  } else if (_isBackspace(key)) {
+    offset--;
+    if (isAfterMistake) {
+      $current.removeClass("after-wrong");
+      $current = $current.prev("span");
+      if (mistakeOffset === offset) {
+        isAfterMistake = false;
+        $current.removeClass("wrong");
+        $current.addClass("highlighted");
+      }
+    } else {
+      $current.removeClass("highlighted");
+      $current.removeClass("right");
+      $current = state.$current.prev("span");
+      $current.removeClass("right");
+      $current.addClass("highlighted");
+    }
+  } else if (state.isAfterMistake) {
+    offset++;
+    $current = $current.next("span");
+    $current.addClass("after-wrong");
+  } else if (_typedCorrect(key, cont, offset)) {
+    // for newlines, add return character to cue user to hit enter;
+    // remove the symbol when they type the next character
+    if (isShowingReturn) {
+      $current.html("<span><br /></span>");
+      isShowingReturn = false;
+    }
+    // check for upcoming newline
+    if (!isShowingReturn && cont[offset + 1] === "\n") {
+      $current.next().html("<span>&#x23CE;<br /></span>");
+      isShowingReturn = true;
+    }
+    if (offset === cont.length - 1) {
+      $("#complete").text("Finished!");
+      $current.removeClass("highlighted");
+      $current.addClass("right");
+      _animate();
+      return;
+    }
+    offset++;
+    $current.removeClass("highlighted");
+    $current.addClass("right");
+    $current = $current.next("span");
+    $current.addClass("highlighted");
+  } else {
+    // user typed incorrect character
+    mistakeOffset = offset;
+    $current.addClass("wrong");
+    isAfterMistake = true;
+    $current = $current.next("span");
+    $current.addClass("after-wrong");
+    offset++;
+  }
+
+  // repack `state` and return
+  state.cont = cont;
+  state.offset = offset;
+  state.isAfterMistake = isAfterMistake;
+  state.isShowingReturn = isShowingReturn;
+  state.$current = $current;
+
+  return state;
+}
 
 // Presentation logic
 function setUpPage(content) {
@@ -125,6 +142,8 @@ function setUpPage(content) {
 
   return $firstTypeableCharacter;
 }
+
+/* Helper Methods */
 
 function _markCorrect($element) {}
 
