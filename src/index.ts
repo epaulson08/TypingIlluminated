@@ -1,26 +1,12 @@
+import { Content } from "./models/Content";
+import { Page } from "./models/Page";
+import { State } from "./models/State";
+
 $(document).ready(() => {
   /* Declarations */
-  var state = {};
-
-  // offset from start of `cont`
-  state.offset = 0;
-
-  // will show a return symbol once the user types
-  // to the end of a line, then hide it again when they
-  // hit enter
-  state.isShowingReturn = false;
-
-  // flag to track if user has not yet corrected
-  // an incorrectly typed key
-  state.isAfterMistake = false;
-
-  // store the offset of the incorrectly typed key
-  state.mistakeOffset = 0;
-
-  // make HTML from content; $current is a span
-  // element wrapping the first typeable character
-  state.$current = setUpPage(secondComing);
-  state.cont = secondComing.text;
+  const txt: Content = new Content();
+  const page: Page = new Page(txt);
+  let state: State = new State(page);
 
   $(document).on("keydown", (e) => {
     // prevent browser default of Space causing down-scroll,
@@ -40,7 +26,7 @@ $(document).ready(() => {
 // Handle behavior on last character (e.g. when typed incorrectly)
 // Fix backspace after return character behavior
 
-function update(state, key) {
+function update(state: State, key: string) {
   // ignore meta-characters
   if (_isMetaCharacter(key)) {
     return state;
@@ -52,7 +38,7 @@ function update(state, key) {
   let mistakeOffset = state.mistakeOffset;
   let isAfterMistake = state.isAfterMistake;
   let isShowingReturn = state.isShowingReturn;
-  let $current = state.$current;
+  let $highlighter = state.$highlighter;
 
   if (_isLastCharacter(cont, offset)) {
     // last character of text plus empty buffer characters
@@ -60,51 +46,52 @@ function update(state, key) {
   } else if (_isBackspace(key)) {
     offset--;
     if (isAfterMistake) {
-      _markPristine($current);
-      $current = $current.prev("span");
+      _markPristine($highlighter);
+      $highlighter = $highlighter.prev("span");
       if (mistakeOffset === offset) {
         isAfterMistake = false;
-        _markHighlighted($current);
+        _markHighlighted($highlighter);
       }
     } else {
-      _markPristine($current);
-      $current = $current.prev("span");
-      _markHighlighted($current);
+      _markPristine($highlighter);
+      $highlighter = $highlighter.prev("span");
+      _markHighlighted($highlighter);
     }
   } else if (isAfterMistake) {
     offset++;
-    $current = $current.next("span");
-    _markAfterMistake($current);
+    $highlighter = $highlighter.next("span");
+    _markAfterMistake($highlighter);
   } else if (_typedCorrect(key, cont, offset)) {
     // for newlines, add return character to cue user to hit enter;
     // remove the symbol when they type the next character
     if (isShowingReturn) {
-      $current.html("<span><br /></span>");
+      $highlighter.html("<span><br /></span>");
       isShowingReturn = false;
     }
     // check for upcoming newline
     if (!isShowingReturn && cont[offset + 1] === "\n") {
-      $current.next().html("<span>&#x23CE;<br /></span>");
+      $highlighter.next().html("<span>&#x23CE;<br /></span>");
       isShowingReturn = true;
     }
     if (_isLastCharacter(cont, offset)) {
       $("#complete").text("Finished!");
-      _markCorrect($current);
+      _markCorrect($highlighter);
       _animateVictory();
       return;
     }
     offset++;
-    _markCorrect($current);
-    $current = $current.next("span");
-    _markHighlighted($current);
-  } else {
-    // user typed incorrect character
+    _markCorrect($highlighter);
+    $highlighter = $highlighter.next("span");
+    _markHighlighted($highlighter);
+  } else if (!_typedCorrect(key, cont, offset)) {
     mistakeOffset = offset;
-    _markIncorrect($current);
+    _markIncorrect($highlighter);
     isAfterMistake = true;
-    $current = $current.next("span");
-    _markAfterMistake($current);
+    $highlighter = $highlighter.next("span");
+    _markAfterMistake($highlighter);
     offset++;
+  } else {
+    console.error("This should be unreachable\nstate=" + state.toString());
   }
 
   // repack `state` and return
@@ -113,79 +100,47 @@ function update(state, key) {
   state.mistakeOffset = mistakeOffset;
   state.isAfterMistake = isAfterMistake;
   state.isShowingReturn = isShowingReturn;
-  state.$current = $current;
+  state.$highlighter = $highlighter;
 
   return state;
 }
 
 // Presentation logic
-function setUpPage(content) {
-  $("h1.title").text(content.title);
-  $("h2.author").text(content.author);
-
-  // `content.text` will remain the original string
-  // `toPresent` will be a copy that is changed to
-  // html
-  let toPresent = content.text;
-
-  // add span wrapper to every character
-  toPresent = _spanify(toPresent);
-
-  // add <br />'s for newlines
-  toPresent = toPresent.replace(/\n/g, "<br />");
-  $("#cont").html(toPresent);
-
-  // initialize highlighter
-  let $firstTypeableCharacter = $("#cont > span:first-child");
-  $firstTypeableCharacter.addClass("highlighted");
-
-  return $firstTypeableCharacter;
-}
-
 /* Helper Methods */
 
-function _markCorrect($element) {
+function _markCorrect($element: JQuery<HTMLElement>) {
   $element.addClass("right");
   $element.removeClass("highlighted");
   $element.removeClass("wrong");
   $element.removeClass("after-wrong");
 }
 
-function _markIncorrect($element) {
+function _markIncorrect($element: JQuery<HTMLElement>) {
   $element.removeClass("right");
   $element.removeClass("highlighted");
   $element.addClass("wrong");
   $element.removeClass("after-wrong");
 }
 
-function _markHighlighted($element) {
+function _markHighlighted($element: JQuery<HTMLElement>) {
   $element.removeClass("right");
   $element.addClass("highlighted");
   $element.removeClass("wrong");
   $element.removeClass("after-wrong");
 }
 
-function _markAfterMistake($element) {
+function _markAfterMistake($element: JQuery<HTMLElement>) {
   $element.removeClass("right");
   $element.removeClass("highlighted");
   $element.removeClass("wrong");
   $element.addClass("after-wrong");
 }
 
-function _markPristine($element) {
+function _markPristine($element: JQuery<HTMLElement>) {
   $element.removeClass("right");
   $element.removeClass("highlighted");
   $element.removeClass("wrong");
   $element.removeClass("after-wrong");
-}
-
-function _spanify(str) {
-  let toReturn = [...str];
-  for (let i = 0; i < toReturn.length; i++) {
-    toReturn.splice(i, 1, `<span>${toReturn[i]}</span>`);
-  }
-  // change back from array to string
-  return toReturn.join("");
 }
 
 function _animateVictory() {
@@ -194,19 +149,19 @@ function _animateVictory() {
 
 // Business logic
 
-function _typedCorrect(key, cont, offset) {
+function _typedCorrect(key: string, cont: string, offset: number) {
   return key === cont[offset] || (cont[offset] === "\n" && key === "Enter");
 }
 
-function _isBackspace(key) {
+function _isBackspace(key: string) {
   return key === "Backspace";
 }
 
-function _isLastCharacter(cont, offset) {
+function _isLastCharacter(cont: string, offset: number) {
   return offset === cont.length - 1;
 }
 
-function _isMetaCharacter(key) {
+function _isMetaCharacter(key: string) {
   // meta-characters to ignore
   const metas = [
     "Meta",

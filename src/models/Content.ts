@@ -1,8 +1,7 @@
-var secondComing = {};
-secondComing.title = "The Second Coming";
-secondComing.author = "William Butler Yeats";
-
-secondComing.text = `Turning and turning in the widening gyre
+export class Content {
+  title: string = "The Second Coming";
+  author: string = "William Butler Yeats";
+  text: string = `Turning and turning in the widening gyre
 The falcon cannot hear the falconer;
 Things fall apart; the centre cannot hold;
 Mere anarchy is loosed upon the world,
@@ -25,3 +24,4 @@ That twenty centuries of stony sleep
 Were vexed to nightmare by a rocking cradle,
 And what rough beast, its hour come round at last,
 Slouches towards Bethlehem to be born?`;
+}
