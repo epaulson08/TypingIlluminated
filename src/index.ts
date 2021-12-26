@@ -47,16 +47,10 @@ function update(state: State, key: string, mark: Marker) {
     // (TODO)
   } else if (_isBackspace(key)) {
     offset--;
-    if (isAfterMistake) {
-      mark.pristine($highlighter);
-      $highlighter = $highlighter.prev("span");
-      if (mistakeOffset === offset) {
-        isAfterMistake = false;
-        mark.highlighted($highlighter);
-      }
-    } else {
-      mark.pristine($highlighter);
-      $highlighter = $highlighter.prev("span");
+    mark.pristine($highlighter);
+    $highlighter = $highlighter.prev("span");
+    if (mistakeOffset === offset) {
+      isAfterMistake = false;
       mark.highlighted($highlighter);
     }
   } else if (isAfterMistake) {
