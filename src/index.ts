@@ -1,4 +1,5 @@
 import { Content } from "./models/Content";
+import { Marker } from "./models/Marker";
 import { Page } from "./models/Page";
 import { State } from "./models/State";
 
@@ -7,6 +8,7 @@ $(document).ready(() => {
   const txt: Content = new Content();
   const page: Page = new Page(txt);
   let state: State = new State(page);
+  let mark: Marker = new Marker();
 
   $(document).on("keydown", (e) => {
     // prevent browser default of Space causing down-scroll,
@@ -16,7 +18,7 @@ $(document).ready(() => {
     }
 
     /* Core Business Logic */
-    state = update(state, e.key);
+    state = update(state, e.key, mark);
   });
 });
 
@@ -26,7 +28,7 @@ $(document).ready(() => {
 // Handle behavior on last character (e.g. when typed incorrectly)
 // Fix backspace after return character behavior
 
-function update(state: State, key: string) {
+function update(state: State, key: string, mark: Marker) {
   // ignore meta-characters
   if (_isMetaCharacter(key)) {
     return state;
@@ -46,21 +48,21 @@ function update(state: State, key: string) {
   } else if (_isBackspace(key)) {
     offset--;
     if (isAfterMistake) {
-      _markPristine($highlighter);
+      mark.pristine($highlighter);
       $highlighter = $highlighter.prev("span");
       if (mistakeOffset === offset) {
         isAfterMistake = false;
-        _markHighlighted($highlighter);
+        mark.highlighted($highlighter);
       }
     } else {
-      _markPristine($highlighter);
+      mark.pristine($highlighter);
       $highlighter = $highlighter.prev("span");
-      _markHighlighted($highlighter);
+      mark.highlighted($highlighter);
     }
   } else if (isAfterMistake) {
     offset++;
     $highlighter = $highlighter.next("span");
-    _markAfterMistake($highlighter);
+    mark.afterMistake($highlighter);
   } else if (_typedCorrect(key, cont, offset)) {
     // for newlines, add return character to cue user to hit enter;
     // remove the symbol when they type the next character
@@ -75,20 +77,20 @@ function update(state: State, key: string) {
     }
     if (_isLastCharacter(cont, offset)) {
       $("#complete").text("Finished!");
-      _markCorrect($highlighter);
+      mark.correct($highlighter);
       _animateVictory();
       return;
     }
     offset++;
-    _markCorrect($highlighter);
+    mark.correct($highlighter);
     $highlighter = $highlighter.next("span");
-    _markHighlighted($highlighter);
+    mark.highlighted($highlighter);
   } else if (!_typedCorrect(key, cont, offset)) {
     mistakeOffset = offset;
-    _markIncorrect($highlighter);
+    mark.incorrect($highlighter);
     isAfterMistake = true;
     $highlighter = $highlighter.next("span");
-    _markAfterMistake($highlighter);
+    mark.afterMistake($highlighter);
     offset++;
   } else {
     console.error("This should be unreachable\nstate=" + state.toString());
@@ -107,41 +109,6 @@ function update(state: State, key: string) {
 
 // Presentation logic
 /* Helper Methods */
-
-function _markCorrect($element: JQuery<HTMLElement>) {
-  $element.addClass("right");
-  $element.removeClass("highlighted");
-  $element.removeClass("wrong");
-  $element.removeClass("after-wrong");
-}
-
-function _markIncorrect($element: JQuery<HTMLElement>) {
-  $element.removeClass("right");
-  $element.removeClass("highlighted");
-  $element.addClass("wrong");
-  $element.removeClass("after-wrong");
-}
-
-function _markHighlighted($element: JQuery<HTMLElement>) {
-  $element.removeClass("right");
-  $element.addClass("highlighted");
-  $element.removeClass("wrong");
-  $element.removeClass("after-wrong");
-}
-
-function _markAfterMistake($element: JQuery<HTMLElement>) {
-  $element.removeClass("right");
-  $element.removeClass("highlighted");
-  $element.removeClass("wrong");
-  $element.addClass("after-wrong");
-}
-
-function _markPristine($element: JQuery<HTMLElement>) {
-  $element.removeClass("right");
-  $element.removeClass("highlighted");
-  $element.removeClass("wrong");
-  $element.removeClass("after-wrong");
-}
 
 function _animateVictory() {
   console.log("This will do something soon");
