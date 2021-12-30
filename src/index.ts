@@ -42,10 +42,7 @@ function update(state: State, key: string, mark: Marker) {
   let isShowingReturn = state.isShowingReturn;
   let $highlighter = state.$highlighter;
 
-  if (_isLastCharacter(cont, offset)) {
-    // last character of text plus empty buffer characters
-    // (TODO)
-  } else if (_isBackspace(key)) {
+  if (_isBackspace(key)) {
     offset--;
     mark.pristine($highlighter);
     $highlighter = $highlighter.prev("span");
@@ -73,7 +70,7 @@ function update(state: State, key: string, mark: Marker) {
       $("#complete").text("Finished!");
       mark.correct($highlighter);
       _animateVictory();
-      return;
+      return state;
     }
     offset++;
     mark.correct($highlighter);
