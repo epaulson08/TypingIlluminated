@@ -11,6 +11,22 @@ Is it compulsive behavior or helpful to the artistic process?
 ### Typing
 Hone the skills of the trade (ref to The Pragmatic Programmer).
 
+## How to Run
+- Clone repo
+- Use a local web server to serve content from the project root directory. One way to do this is:
+```bash
+npx http-server
+```
+Or, install `http-server`:
+```bash
+npm install --global http-server
+```
+Then do
+```bash
+http-server
+```
+from the project root directory.
+
 ## Steps of the Solution
 For this discussion, the text to be typed will be referred to as `cont`.
 
