@@ -17,19 +17,19 @@ span {
 
 .container {
   background-color: white;
-  max-width: 600px;
+  max-width: 37.5rem;
   margin: 0 auto;
   box-shadow: rgba(149, 157, 165, 0.4) 0px 8px 24px;
 }
 
 .container-content {
-  padding: 0 30px;
+  padding: 0 1.875rem;
   min-height: 100vh;
 }
 
 h1 {
   margin-top: 0;
-  padding-top: 20px;
+  padding-top: 1.25rem;
 }
 
 p {
@@ -48,7 +48,7 @@ p {
 }
 
 .highlighted {
-  background-color: darkblue;
+  background-color: green;
   color: white;
 }
 
@@ -59,5 +59,14 @@ p {
 
 .after-wrong {
   background-color: darkgray;
+  color: white;
+}
+
+#stopwatch {
+  padding: 0.625rem;
+  position: sticky;
+  float: right;
+  top: 0rem;
+  background-color: darkgreen;
   color: white;
 }
