@@ -1,7 +1,9 @@
+import { timers } from "jquery";
 import { Content } from "./models/Content";
 import { Marker } from "./models/Marker";
 import { Page } from "./models/Page";
 import { State } from "./models/State";
+import { Timer } from "./models/Timer";
 
 $(document).ready(() => {
   /* Declarations */
@@ -10,10 +12,13 @@ $(document).ready(() => {
   let state: State = new State(page);
   let mark: Marker = new Marker();
   let timerStarted: boolean = false;
+  let timer: Timer;
 
   $(document).on("keydown", (e) => {
     if (!timerStarted) {
-      _startTimer();
+      timer = new Timer();
+      timer.start();
+      state.addTimer(timer);
       timerStarted = true;
     }
 
@@ -47,6 +52,7 @@ function update(state: State, key: string, mark: Marker) {
   let isAfterMistake = state.isAfterMistake;
   let isShowingReturn = state.isShowingReturn;
   let $highlighter = state.$highlighter;
+  let timer = state.timer;
 
   if (_isBackspace(key)) {
     offset--;
@@ -75,6 +81,7 @@ function update(state: State, key: string, mark: Marker) {
     if (_isLastCharacter(cont, offset)) {
       $("#complete").text("Finished!");
       mark.correct($highlighter);
+      timer.stop();
       _animateVictory();
       return state;
     }
@@ -100,6 +107,7 @@ function update(state: State, key: string, mark: Marker) {
   state.isAfterMistake = isAfterMistake;
   state.isShowingReturn = isShowingReturn;
   state.$highlighter = $highlighter;
+  state.timer = timer;
 
   return state;
 }
@@ -109,15 +117,6 @@ function update(state: State, key: string, mark: Marker) {
 // Presentation logic
 function _animateVictory() {
   console.log("This will do something soon");
-}
-
-// Timer
-function _startTimer() {
-  let time = 0;
-  setInterval(() => {
-    time++;
-    $("#stopwatch").text(time);
-  }, 1000);
 }
 
 // Business logic

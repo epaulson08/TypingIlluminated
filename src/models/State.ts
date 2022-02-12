@@ -1,4 +1,5 @@
 import { Page } from "./Page";
+import { Timer } from "./Timer";
 
 export class State {
   offset;
@@ -7,6 +8,7 @@ export class State {
   mistakeOffset;
   $highlighter;
   cont;
+  timer: Timer;
 
   constructor(page: Page) {
     // offset from start of `cont`
@@ -28,6 +30,10 @@ export class State {
     // element wrapping the first typeable character
     this.$highlighter = page.$firstTypeableCharacter;
     this.cont = page.content.text;
+  }
+
+  addTimer(timer: Timer) {
+    this.timer = timer;
   }
 
   toString() {
