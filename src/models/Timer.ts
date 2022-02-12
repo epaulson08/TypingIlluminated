@@ -1,6 +1,6 @@
 export class Timer {
   private time: number = 0;
-  private intervalId: any;
+  private intervalId: any = -1;
 
   start() {
     this.intervalId = setInterval(() => {
@@ -10,7 +10,8 @@ export class Timer {
   }
 
   show() {
-    $("#timer").text(this.time);
+    let formattedTime: string = this.formatTime(this.time);
+    $("#timer").text(formattedTime);
   }
 
   stop() {
@@ -18,4 +19,24 @@ export class Timer {
   }
 
   reset() {}
+  private formatTime(seconds: number) {
+    let formattedTime: string = "";
+    let secondsRemainder: number = seconds % 60;
+    let minutes: number = (seconds - secondsRemainder) / 60;
+    if (minutes < 10) {
+      formattedTime += "0" + minutes;
+    } else {
+      formattedTime += minutes;
+    }
+
+    formattedTime += ":";
+
+    if (secondsRemainder < 10) {
+      formattedTime += "0" + secondsRemainder.toString();
+    } else {
+      formattedTime += secondsRemainder.toString();
+    }
+
+    return formattedTime;
+  }
 }

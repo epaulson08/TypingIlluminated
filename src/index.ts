@@ -1,4 +1,3 @@
-import { timers } from "jquery";
 import { Content } from "./models/Content";
 import { Marker } from "./models/Marker";
 import { Page } from "./models/Page";
