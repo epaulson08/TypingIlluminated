@@ -9,8 +9,14 @@ $(document).ready(() => {
   const page: Page = new Page(txt);
   let state: State = new State(page);
   let mark: Marker = new Marker();
+  let timerStarted: boolean = false;
 
   $(document).on("keydown", (e) => {
+    if (!timerStarted) {
+      _startTimer();
+      timerStarted = true;
+    }
+
     // prevent browser default of Space causing down-scroll,
     // but do not lock up other metacharacters
     if (e.code === "Space") {
@@ -98,15 +104,23 @@ function update(state: State, key: string, mark: Marker) {
   return state;
 }
 
-// Presentation logic
 /* Helper Methods */
 
+// Presentation logic
 function _animateVictory() {
   console.log("This will do something soon");
 }
 
-// Business logic
+// Timer
+function _startTimer() {
+  let time = 0;
+  setInterval(() => {
+    time++;
+    $("#stopwatch").text(time);
+  }, 1000);
+}
 
+// Business logic
 function _typedCorrect(key: string, cont: string, offset: number) {
   return key === cont[offset] || (cont[offset] === "\n" && key === "Enter");
 }
