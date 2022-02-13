@@ -78,10 +78,9 @@ function update(state: State, key: string, mark: Marker) {
       isShowingReturn = true;
     }
     if (_isLastCharacter(cont, offset)) {
-      $("#complete").text("Finished!");
       mark.correct($highlighter);
       timer.stop();
-      _animateVictory();
+      _win(timer.getTime());
       return state;
     }
     offset++;
@@ -113,12 +112,15 @@ function update(state: State, key: string, mark: Marker) {
 
 /* Helper Methods */
 
-// Presentation logic
-function _animateVictory() {
+function _win(time: number) {
   console.log("This will do something soon");
+  _animateVictory(time);
 }
 
-// Business logic
+function _animateVictory(time: number) {
+  $("#complete").text(`Finished in ${Timer.formatTime(time)}`);
+}
+
 function _typedCorrect(key: string, cont: string, offset: number) {
   return key === cont[offset] || (cont[offset] === "\n" && key === "Enter");
 }

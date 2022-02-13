@@ -10,16 +10,24 @@ export class Timer {
   }
 
   show() {
-    let formattedTime: string = this.formatTime(this.time);
-    $("#timer").text(formattedTime);
+    $("#timer").text(Timer.formatTime(this.time));
   }
 
   stop() {
     clearInterval(this.intervalId);
   }
 
-  reset() {}
-  private formatTime(seconds: number) {
+  reset() {
+    this.time = 0;
+    this.show();
+    this.intervalId = -1;
+  }
+
+  getTime() {
+    return this.time;
+  }
+
+  static formatTime(seconds: number): string {
     let formattedTime: string = "";
     let secondsRemainder: number = seconds % 60;
     let minutes: number = (seconds - secondsRemainder) / 60;
