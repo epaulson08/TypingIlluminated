@@ -4,7 +4,7 @@ import { Page } from "./models/Page";
 import { State } from "./models/State";
 import { Timer } from "./models/Timer";
 
-$(document).ready(() => {
+jQuery(function () {
   /* Declarations */
   const txt: Content = new Content();
   const page: Page = new Page(txt);
